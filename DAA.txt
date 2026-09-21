@@ -1,6 +1,52 @@
 
 
 
+Software Requirements Specification (SRS)
+
+1. Introduction
+
+The Software Requirements Specification (SRS) describes the requirements and functions of [System Name]. It defines what the system should do and the requirements needed to develop the system.
+
+2. Purpose
+
+The purpose of [System Name] is to provide an efficient and user-friendly system for managing the required activities. It reduces manual work, improves accuracy, and provides quick access to information.
+
+3. Scope
+
+The system allows authorized users to manage system-related information. It provides facilities such as adding, viewing, searching, updating, and deleting records.
+
+4. Functional Requirements
+
+The main functional requirements are:
+
+- User Login: Users can securely log in to the system.
+- Add Records: Authorized users can add new information.
+- View/Search: Users can view and search required records.
+- Update Records: Authorized users can modify existing records.
+- Delete Records: Authorized users can delete unnecessary records.
+- Report: The system can provide required reports or information.
+- Logout: Users can safely log out from the system.
+
+5. Non-Functional Requirements
+
+- Performance: The system should provide a quick response.
+- Security: Only authorized users should access protected data.
+- Reliability: The system should work correctly and maintain data properly.
+- Usability: The system should have a simple and user-friendly interface.
+- Maintainability: The system should be easy to maintain and modify.
+
+6. Hardware and Software Requirements
+
+The system requires a computer or mobile device, suitable operating system, application software, database, and web browser if required.
+
+7. Conclusion
+
+The proposed [System Name] provides an efficient, secure, reliable, and user-friendly solution. It reduces manual effort and improves the management of system information.
+
+
+
+
+
 <!----------------------------- Merge Sort ----------------------------------------------->
 
 def merge_sort(arr):
