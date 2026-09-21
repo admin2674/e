@@ -1,0 +1,1695 @@
+
+
+
+<!----------------------------- Merge Sort ----------------------------------------------->
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    lefthalf = arr[:mid]
+    righthalf = arr[mid:]
+
+    print("Dividing: Left=", lefthalf, "Right=", righthalf)
+
+    sortedleft = merge_sort(lefthalf)
+    sortedright = merge_sort(righthalf)
+
+    return merge(sortedleft, sortedright)
+
+def merge(left, right):
+    result = []
+    i = j = 0
+
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+        
+    result.extend(left[i:])
+    result.extend(right[j:])
+
+    print("Merged: ", result)
+    return result
+
+array = [11, 8, 4, 16, 2, 23]
+print("Original array : ", array)
+sortedArray = merge_sort(array)
+print("Sorted array: ", sortedArray)
+
+
+
+<!------------------------------ Merge Sort Descending ----------------------------------------------->
+
+
+def merge_sort_des(arr):
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    lefthalf = arr[:mid]
+    righthalf = arr[mid:]
+
+    print("Dividing: Left=", lefthalf, "Right=", righthalf)
+
+    sortedleft = merge_sort_des(lefthalf)
+    sortedright = merge_sort_des(righthalf)
+
+    return merge(sortedleft, sortedright)
+
+def merge(left, right):
+    result = []
+    i = j = 0
+
+    while(i < len(left) and j < len(right)):
+        if left[i] > right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+        
+    result.extend(left[i:])
+    result.extend(right[j:])
+
+    print("Merged: ", result)
+
+    return result
+
+array = [11, 8, 4, 16, 2, 23]
+print("Original array : ", array)
+sortedArray =  merge_sort_des(array)
+print("Sorted descending array: ", sortedArray)
+
+
+<!------------------------------ Quick Sort ----------------------------------------------->
+
+def quick_sort(arr, low, high):
+    if low < high:
+        pivot = partition(arr, low, high)
+        quick_sort(arr, low, pivot - 1)
+        quick_sort(arr, pivot + 1, high)
+
+def partition(arr, low, high):
+    p = arr[low]
+    print("Pivot chosen: ", p, "in range [", low, "..", high, "]")
+    i = low + 1
+    j = high
+
+    while True:
+        while i <= j and arr[i] <= p:
+            i += 1
+        while i <= j and arr[j] >= p:
+            j -= 1
+        if i <= j:
+            arr[i], arr[j] = arr[j], arr[i]
+        else:
+            break
+
+    arr[low], arr[j] = arr[j], arr[low]
+    print("State after partitioning around ", p, ": ", arr)
+    return j
+
+arr = [7, 1, 2, 5, 6, 8]
+quick_sort(arr, 0, len(arr) - 1)
+print("Sorted array : ", arr)
+
+
+<!------------------------------ Quick Sort Descending ----------------------------------------------->
+
+
+def quick_sort_descending(arr, low, high):
+    if low < high:
+        pivot = partition(arr, low, high)
+        quick_sort_descending(arr, low, pivot - 1)
+        quick_sort_descending(arr, pivot + 1, high)
+
+def partition(arr, low, high):
+    p = arr[low]
+    print("Pivot chosen: ", p, "in range [", low, "..", high, "]")
+    i = low + 1
+    j = high
+
+    while True:
+        print(arr)
+        while i<=j and arr[i]>=p:
+            i += 1
+        while i<=j and arr[j]<=p:
+            j -= 1
+        if i <= j:
+            arr[i], arr[j] = arr[j], arr[i]
+        else:
+            break
+
+    arr[low], arr[j] = arr[j], arr[low]
+    print("State after partitioning around ", p, ": ", arr)
+    return j
+arr = [7, 1, 2, 5, 6, 8]
+quick_sort_descending(arr, 0 , len(arr) - 1)
+print("Sorted array (Descending) : ", arr)
+
+
+<!------------------------------ Quick Sort last pivot ----------------------------------------------->
+
+
+def quick_sort_last_pivot(arr, low, high):
+    if low < high:
+        pivot = partition(arr, low, high)
+        quick_sort_last_pivot(arr, low, pivot - 1)
+        quick_sort_last_pivot(arr, pivot + 1, high)
+
+def partition_last_pivot(arr, low, high):
+    p = arr[high]
+    print("Pivot chosen: ", p, "in range [", low, "..", high, "]")
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] <= p:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    print("State after partitioning around ", p, ": ", arr)
+    return i + 1
+
+arr = [7, 1, 2, 5, 6, 8]
+print("Initial array : ", arr)
+quick_sort_last_pivot(arr, 0, len(arr) - 1)
+print("Sorted array (Ascending - Last Pivot) : ", arr)
+
+<!----------------------------- Activity Selection Problem ------------------->
+
+def activity_selection(start, finish):
+    activities = list(zip(start, finish))
+    activities.sort(key=lambda x: x[1])
+    
+    print("Sorted Activities (Start, Finish):", activities)
+    print("-" * 45)
+    
+    selected = []
+    last_end = 0
+    step = 1 
+
+    for s, f in activities:
+        if s >= last_end:
+            selected.append((s, f))
+            print("Step ", step, ": Selected (",s,",",f,") | New Last End Time = ", f)
+            last_end = f
+        else:
+            print("Step ", step, ": Skipped  (",s,",",f,") | Conflicts with Last End Time (",last_end,")")
+        step += 1 
+    return selected
+
+start = [1, 3, 0, 5, 8, 5]
+finish = [2, 4, 6, 7, 9, 9]
+
+result = activity_selection(start, finish)
+print("-" * 45)
+print("Final Selected Activities : ", result)
+
+
+<!----------------------------- fractinal knapsack problem ------------------->
+
+def fractional_knapsack(capacity, weights, values):
+    n = len(values)
+    items = []
+    for i in range(n):
+        ratio = values[i] / weights[i]
+        items.append((ratio, values[i], weights[i]))
+    items.sort(reverse=True)
+    total_value = 0.0
+
+    for ratio, value, weight in items:
+        if capacity >= weight:
+            capacity -= weight
+            total_value += value
+            print("Added full item: Value = ",value, "Weight = ",weight, "Capacity left = ",capacity)
+        else:
+            total_value += ratio * capacity
+            print("Added fraction: Value = ",ratio * capacity, "Weight = ",capacity, "Capacity left = 0")
+            break
+    return total_value
+
+values = [100, 60, 120] 
+weights = [20, 10, 30]
+capacity = 50
+
+result = fractional_knapsack(capacity, weights, values)
+print("Total value :", result)
+
+
+<!----------------------------- fractinal knapsack names ------------------->
+
+
+def fractional_knapsack(capacity, weights, values, names):
+    n = len(values)
+    items = []
+    for i in range(n):
+        ratio = values[i] / weights[i]
+        items.append((ratio, values[i], weights[i], names[i]))
+    
+    items.sort(reverse=True)
+    total_value = 0.0
+
+    print("Step-by-step execution:")
+    for ratio, value, weight, name in items:
+        if capacity >= weight:
+            capacity -= weight
+            total_value += value
+            print("Added full", name, ": Weight =", weight, ", Value =", value, ", Capacity left =", capacity)
+        else:
+            taken_val = ratio * capacity
+            total_value += taken_val
+            print("Added fraction of", name, ": Weight =", capacity, ", Value =", taken_val, ", Capacity left = 0")
+            break
+
+    return total_value
+
+names = ["Silver", "Platinum", "Gold"]
+values = [100, 60, 120]
+weights = [20, 10, 30]
+capacity = 50
+
+result = fractional_knapsack(capacity, weights, values, names)
+print("-" * 50)
+print("Total value :", result)
+
+
+<!----------------------------- 0-1 knapsack problem ------------------->
+
+def knapsackRec(w, val, wt, n):
+    if n == 0 or w == 0:
+        return 0
+    pick = 0
+    if wt[n - 1] <= w:
+        pick = val[n - 1] +knapsackRec(w - wt[n - 1], val, wt, n-1)
+    notPick = knapsackRec(w, val,wt, n-1)
+    if pick > notPick:
+        print("Item ",n, " (Val:",val[n-1], ", Wt:",wt[n-1],"): Picked")
+    else:
+        print("Item ",n, " (Val:",val[n-1], ", Wt:",wt[n-1],"): Skipped")
+    return max(pick, notPick)
+
+def knapsack(w, val, wt):
+    n = len(val)
+    return knapsackRec(w, val, wt, n)
+
+val = [1, 7, 11]
+wt = [1, 2, 3]
+w = 5
+print("Steps:")
+result = knapsack(w, val, wt)
+print("Maximum Value:", result)
+
+
+<!--------------------------------- BFS ------------------->
+
+from collections import deque
+
+def bfs(graph, start):
+    visited = set()
+    queue = deque([start])
+
+    while queue:
+        node = queue.popleft()
+        if node not in visited:
+            print(node, end=" ")
+            visited.add(node)
+	    #print("Visited: ",node," | Queue left: ",list(queue))
+
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                queue.append(neighbor)
+        
+graph = {
+ 'A': ['B', 'C'],
+ 'B': ['A', 'D', 'E'],
+ 'C': ['A'],
+ 'D': ['B'],
+ 'E': ['B']
+}
+print("\nBFS Traversal:")
+bfs(graph, 'A')
+
+
+<!--------------------------------- DFS ------------------->
+
+
+def dfs(graph, start, visited = None):
+    if visited is None:
+        visited = set()
+
+    print(start, end = " ")
+    visited.add(start)
+    #print("Visited: ",start," | Visited set: ",visited)
+
+    for neighbor in graph[start]:
+        if neighbor not in visited:
+            dfs(graph, neighbor, visited)
+
+graph = {
+    'A' : ['B','C'],
+    'B' : ['A','D','E'],
+    'C' : ['A'],
+    'D' : ['B'],
+    'E' : ['B']
+}
+
+print("DFS Traversal : ")
+dfs(graph, 'A')
+
+
+<!----------------------------- Matrix Chain Multiplication ------------------->
+
+
+mc = [[-1 for n in range(50)] for m in range(50)]
+
+def DynamicProgramming(c, i, j):
+    if i == j:
+        return 0
+    if mc[i][j] != -1:
+        return mc[i][j]
+    mc[i][j] = 999999
+    for k in range(i, j):
+        mc[i][j] = min(mc[i][j], DynamicProgramming(c, i, k) + DynamicProgramming(c, k + 1, j) + c[i - 1] * c[k] * c[j])
+        #print("Calculated cost for matrices [",i," to ",j,"]:",mc[i][j])
+    return mc[i][j]
+
+def Matrix(c, n):
+    i = 1
+    j = n - 1
+    return DynamicProgramming(c, i, j)
+
+arr = [5, 10, 15, 20, 25]
+n = len(arr)
+result = Matrix(arr, n)
+print("-" * 40)
+print("Minimum number of multiplications is:", result)
+
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+Assignment
+<!---------------------------------------------------------------------------------------------------------------------------->
+1. Merge Sort (Divide and Conquer)
+
+
+1. Write a program to sort an array of 10 integers
+using Merge Sort.
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    lefthalf = arr[:mid]
+    righthalf = arr[mid:]
+    print("Dividing: Left=", lefthalf, "Right=", righthalf)
+    sortedleft = merge_sort(lefthalf)
+    sortedright = merge_sort(righthalf)
+    return merge(sortedleft, sortedright)
+def merge(left, right):
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    print("Merged: ", result)
+    return result
+array = [11, 8, 4, 16, 2, 23, 7, 19, 5, 13]
+print("Original array:", array)
+sortedArray = merge_sort(array)
+print("Sorted array:", sortedArray)
+
+
+
+
+2. Implement Merge Sort to arrange names of
+students in alphabetical order.
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    lefthalf = arr[:mid]
+    righthalf = arr[mid:]
+    print("Dividing: Left=", lefthalf, "Right=", righthalf)
+    sortedleft = merge_sort(lefthalf)
+    sortedright = merge_sort(righthalf)
+    return merge(sortedleft, sortedright)
+def merge(left, right):
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i].lower() < right[j].lower():
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    print("Merged: ", result)
+    return result
+students = [
+    "Rahul",
+    "Amit",
+    "Priya",
+    "Neha",
+    "Karan",
+    "Sneha",
+    "Vivek",
+    "Anjali"
+]
+print("Original names:", students)
+sortedStudents = merge_sort(students)
+print("Alphabetical order:", sortedStudents)
+
+
+
+
+3. Demonstrate Merge Sort on an array of 15 floating-
+point numbers and display the number of
+comparisons made.
+
+comparisons = 0
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    lefthalf = arr[:mid]
+    righthalf = arr[mid:]
+    print("Dividing: Left=", lefthalf, "Right=", righthalf)
+    sortedleft = merge_sort(lefthalf)
+    sortedright = merge_sort(righthalf)
+    return merge(sortedleft, sortedright)
+def merge(left, right):
+    global comparisons
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        comparisons += 1
+        if left[i] < right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    print("Merged: ", result)
+    return result
+array = [
+    12.5, 3.2, 8.7, 1.4, 15.6,
+    6.3, 9.8, 2.1, 11.9, 4.5,
+    7.6, 14.2, 5.8, 10.3, 0.9
+]
+print("Original array:")
+print(array)
+sortedArray = merge_sort(array)
+print("\nSorted array:")
+print(sortedArray)
+print("\nNumber of comparisons:", comparisons)
+
+
+
+4. Apply Merge Sort to sort employee records
+(EmployeeID, Name, Salary) by Salary in ascending
+order.
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    lefthalf = arr[:mid]
+    righthalf = arr[mid:]
+    print("Dividing: Left=", lefthalf, "Right=", righthalf)
+    sortedleft = merge_sort(lefthalf)
+    sortedright = merge_sort(righthalf)
+    return merge(sortedleft, sortedright)
+def merge(left, right):
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i][2] < right[j][2]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    print("Merged: ", result)
+    return result
+employees = [
+    (101, "Rahul", 55000),
+    (102, "Priya", 72000),
+    (103, "Amit", 48000),
+    (104, "Neha", 65000),
+    (105, "Karan", 90000),
+    (106, "Sneha", 58000)
+]
+print("Original employee records:")
+for employee in employees:
+    print(employee)
+sortedEmployees = merge_sort(employees)
+print("\nEmployees sorted by salary:")
+for employee in sortedEmployees:
+    print(employee)
+
+
+5. Implement Merge Sort and display the array after
+each merge step.
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    lefthalf = arr[:mid]
+    righthalf = arr[mid:]
+    print("Dividing: Left=", lefthalf, "Right=", righthalf)
+    sortedleft = merge_sort(lefthalf)
+    sortedright = merge_sort(righthalf)
+    merged = merge(sortedleft, sortedright)
+    print("After merge:", merged)
+    return merged
+def merge(left, right):
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    print("Merged: ", result)
+    return result
+array = [11, 8, 4, 16, 2, 23]
+print("Original array:", array)
+sortedArray = merge_sort(array)
+print("Final sorted array:", sortedArray)
+
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+2. Quick Sort (Divide and Conquer)
+
+1. Write a program to implement Quick Sort on an
+array of integers.
+
+def quick_sort(arr, low, high):
+    if low < high:
+        pivot = partition(arr, low, high)
+        quick_sort(arr, low, pivot - 1)
+        quick_sort(arr, pivot + 1, high)
+def partition(arr, low, high):
+    p = arr[low]
+    print("Pivot chosen: ", p, "in range [", low, "..", high, "]")
+    i = low + 1
+    j = high
+    while True:
+        while i <= j and arr[i] <= p:
+            i += 1
+        while i <= j and arr[j] >= p:
+            j -= 1
+        if i <= j:
+            arr[i], arr[j] = arr[j], arr[i]
+        else:
+            break
+    arr[low], arr[j] = arr[j], arr[low]
+    print("State after partitioning around ", p, ": ", arr)
+    return j
+arr = [7, 1, 2, 5, 6, 8]
+print("Original array:", arr)
+quick_sort(arr, 0, len(arr) - 1)
+print("Sorted array:", arr)
+
+
+
+2. Implement Quick Sort to sort student marks in
+descending order.
+
+def quick_sort(arr, low, high):
+    if low < high:
+        pivot = partition(arr, low, high)
+        quick_sort(arr, low, pivot - 1)
+        quick_sort(arr, pivot + 1, high)
+def partition(arr, low, high):
+    p = arr[low]
+    print("Pivot chosen: ", p, "in range [", low, "..", high, "]")
+    i = low + 1
+    j = high
+    while True:
+        while i <= j and arr[i] >= p:
+            i += 1
+        while i <= j and arr[j] <= p:
+            j -= 1
+        if i <= j:
+            arr[i], arr[j] = arr[j], arr[i]
+        else:
+            break
+    arr[low], arr[j] = arr[j], arr[low]
+    print("State after partitioning around ", p, ": ", arr)
+    return j
+marks = [78, 92, 65, 88, 95, 72, 81, 60]
+print("Original marks:", marks)
+quick_sort(marks, 0, len(marks) - 1)
+print("Marks in descending order:", marks)
+
+
+3. Demonstrate Quick Sort on a list of 20 random
+numbers and display the pivot element at each
+step.
+
+import random
+def quick_sort(arr, low, high):
+    if low < high:
+        pivot = partition(arr, low, high)
+        quick_sort(arr, low, pivot - 1)
+        quick_sort(arr, pivot + 1, high)
+def partition(arr, low, high):
+    p = arr[low]
+    print("Pivot chosen: ", p, "in range [", low, "..", high, "]")
+    i = low + 1
+    j = high
+    while True:
+        while i <= j and arr[i] <= p:
+            i += 1
+        while i <= j and arr[j] >= p:
+            j -= 1
+        if i <= j:
+            arr[i], arr[j] = arr[j], arr[i]
+        else:
+            break
+    arr[low], arr[j] = arr[j], arr[low]
+    print("State after partitioning around ", p, ": ", arr)
+    return j
+arr = [random.randint(1, 100) for _ in range(20)]
+print("Original array:", arr)
+quick_sort(arr, 0, len(arr) - 1)
+print("Sorted array:", arr)
+
+
+4. Apply Quick Sort to sort product prices and
+display the sorted list.
+
+def quick_sort(arr, low, high):
+    if low < high:
+        pivot = partition(arr, low, high)
+        quick_sort(arr, low, pivot - 1)
+        quick_sort(arr, pivot + 1, high)
+def partition(arr, low, high):
+    p = arr[low]
+    print("Pivot chosen: ", p, "in range [", low, "..", high, "]")
+    i = low + 1
+    j = high
+    while True:
+        while i <= j and arr[i] <= p:
+            i += 1
+        while i <= j and arr[j] >= p:
+            j -= 1
+        if i <= j:
+            arr[i], arr[j] = arr[j], arr[i]
+        else:
+            break
+    arr[low], arr[j] = arr[j], arr[low]
+    print("State after partitioning around ", p, ": ", arr)
+    return j
+prices = [499.99, 1299.50, 799.00, 249.75, 999.99, 149.50, 599.25]
+print("Original prices:", prices)
+quick_sort(prices, 0, len(prices) - 1)
+print("Sorted prices:", prices)
+
+
+5. Implement Quick Sort to arrange characters of a
+string in alphabetical order.
+
+def quick_sort(arr, low, high):
+    if low < high:
+        pivot = partition(arr, low, high)
+        quick_sort(arr, low, pivot - 1)
+        quick_sort(arr, pivot + 1, high)
+def partition(arr, low, high):
+    p = arr[low]
+    print("Pivot chosen: ", p, "in range [", low, "..", high, "]")
+    i = low + 1
+    j = high
+    while True:
+        while i <= j and arr[i].lower() <= p.lower():
+            i += 1
+        while i <= j and arr[j].lower() >= p.lower():
+            j -= 1
+        if i <= j:
+            arr[i], arr[j] = arr[j], arr[i]
+        else:
+            break
+    arr[low], arr[j] = arr[j], arr[low]
+    print("State after partitioning around ", p, ": ", arr)
+    return j
+text = "QUICKSORT"
+characters = list(text)
+print("Original string:", text)
+quick_sort(characters, 0, len(characters) - 1)
+sorted_string = "".join(characters)
+print("Alphabetical order:", sorted_string)
+
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+3. Activity Selection (Greedy Technique)
+
+
+1. Implement the Activity Selection problem to find
+the maximum number of activities a single person
+can perform.
+
+def activity_selection(start, finish):
+    activities = list(zip(start, finish))
+    activities.sort(key=lambda x: x[1])
+    print("Sorted Activities (Start, Finish):", activities)
+    print("-" * 45)
+    selected = []
+    last_end = 0
+    step = 1
+    for s, f in activities:
+        if s >= last_end:
+            selected.append((s, f))
+            print("Step", step, ": Selected (", s, ",", f, ") | New Last End Time =", f)
+            last_end = f
+        else:
+            print("Step", step, ": Skipped (", s, ",", f, ") | Conflicts with Last End Time (", last_end, ")")
+        step += 1
+    return selected
+start = [1, 3, 0, 5, 8, 5]
+finish = [2, 4, 6, 7, 9, 9]
+result = activity_selection(start, finish)
+print("-" * 45)
+print("Final Selected Activities:", result)
+print("Maximum Number of Activities:", len(result))
+
+
+
+2. Solve the Activity Selection problem where
+activities have given start and finish times.
+
+def activity_selection(start, finish):
+    activities = list(zip(start, finish))
+    activities.sort(key=lambda x: x[1])
+    print("Activities after sorting by finish time:")
+    print(activities)
+    print("-" * 45)
+    selected = []
+    last_end = 0
+    for s, f in activities:
+        if s >= last_end:
+            selected.append((s, f))
+            last_end = f
+    return selected
+start = [1, 3, 0, 5, 8, 5]
+finish = [2, 4, 6, 7, 9, 9]
+print("Start Times :", start)
+print("Finish Times:", finish)
+print("-" * 45)
+result = activity_selection(start, finish)
+print("Selected Activities:", result)
+print("Maximum Activities:", len(result))
+
+3. Write a program that inputs activities from the user
+and outputs the selected activities using the
+greedy method.
+
+def activity_selection(start, finish):
+    activities = list(zip(start, finish))
+    activities.sort(key=lambda x: x[1])
+    print("\nSorted Activities (Start, Finish):", activities)
+    print("-" * 45)
+    selected = []
+    last_end = 0
+    step = 1
+    for s, f in activities:
+        if s >= last_end:
+            selected.append((s, f))
+            print("Step", step, ": Selected (", s, ",", f, ")")
+            last_end = f
+        else:
+            print("Step", step, ": Skipped (", s, ",", f, ")")
+        step += 1
+    return selected
+n = int(input("Enter number of activities: "))
+start = []
+finish = []
+for i in range(n):
+    print("\nActivity", i + 1)
+    s = int(input("Enter start time: "))
+    f = int(input("Enter finish time: "))
+    start.append(s)
+    finish.append(f)
+result = activity_selection(start, finish)
+print("-" * 45)
+print("Final Selected Activities:", result)
+print("Maximum Number of Activities:", len(result))
+
+
+4. Demonstrate Activity Selection by scheduling
+maximum possible classes in a classroom.
+
+def activity_selection(classes):
+    classes.sort(key=lambda x: x[2])
+    print("Classes sorted by finish time:")
+    print("-" * 50)
+    for c in classes:
+        print(c[0], "Start:", c[1], "Finish:", c[2])
+    print("-" * 50)
+    selected = []
+    last_end = 0
+    for name, start, finish in classes:
+        if start >= last_end:
+            selected.append((name, start, finish))
+            print("Selected:", name, "|", start, "to", finish)
+            last_end = finish
+        else:
+            print("Skipped :", name, "|", start, "to", finish)
+    return selected
+classes = [
+    ("Mathematics", 9, 10),
+    ("Python", 10, 11),
+    ("Database", 9, 12),
+    ("Java", 11, 12),
+    ("Web Development", 12, 1),
+    ("Data Science", 1, 2)
+]
+result = activity_selection(classes)
+print("-" * 50)
+print("Selected Classes:")
+for name, start, finish in result:
+    print(name, ":", start, "to", finish)
+print("Maximum Classes:", len(result))
+
+
+5. Apply Activity Selection to select the maximum
+number of meetings in a single meeting hall.
+
+def activity_selection(start, finish):
+    activities = list(zip(start, finish))
+    activities.sort(key=lambda x: x[1])
+    print("Sorted Activities:")
+    print(activities)
+    print("-" * 45)
+    selected = []
+    last_end = 0
+    step = 1
+    for s, f in activities:
+        if s >= last_end:
+            selected.append((s, f))
+            print("Step", step,": Selected (", s, ",", f, ")","| Last End =", f)
+            last_end = f
+        else:
+            print("Step", step, ": Skipped (", s, ",", f, ")","| Conflict")
+        step += 1
+    return selected
+start = [2, 1, 3, 0, 5, 8, 5, 12, 13]
+finish = [3, 4, 5, 6, 7, 9, 9, 14, 15]
+print("Start Times :", start)
+print("Finish Times:", finish)
+print("-" * 45)
+result = activity_selection(start, finish)
+print("-" * 45)
+print("Final Selected Activities:", result)
+print("Maximum Number of Activities:", len(result))
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+4. Fractional Knapsack (Greedy Technique)
+
+1. Implement the Fractional Knapsack problem for
+given weights and values.
+
+def fractional_knapsack(capacity, weights, values):
+    n = len(values)
+    items = []
+    for i in range(n):
+        ratio = values[i] / weights[i]
+        items.append((ratio, values[i], weights[i]))
+    items.sort(reverse=True)
+    total_value = 0.0
+    for ratio, value, weight in items:
+        if capacity >= weight:
+            capacity -= weight
+            total_value += value
+        else:
+            total_value += ratio * capacity
+            break
+    return total_value
+values = [100, 60, 120]
+weights = [20, 10, 30]
+capacity = 50
+result = fractional_knapsack(capacity, weights, values)
+print("Maximum value:", result)
+
+
+
+2. Write a program to maximize profit using the
+Fractional Knapsack approach.
+
+def fractional_knapsack(capacity, weights, profits):
+    n = len(profits)
+    items = []
+    for i in range(n):
+        ratio = profits[i] / weights[i]
+        items.append((ratio, profits[i], weights[i]))
+    items.sort(reverse=True)
+    total_profit = 0.0
+    for ratio, profit, weight in items:
+        if capacity >= weight:
+            capacity -= weight
+            total_profit += profit
+        else:
+            total_profit += ratio * capacity
+            break
+    return total_profit
+profits = [40, 100, 120, 60]
+weights = [5, 20, 30, 10]
+capacity = 50
+result = fractional_knapsack(capacity, weights, profits)
+print("Maximum profit:", result)
+
+3. Demonstrate Fractional Knapsack by distributing
+items of varying values into a bag of fixed
+capacity.
+
+def fractional_knapsack(capacity, weights, values):
+    n = len(values)
+    items = []
+    for i in range(n):
+        ratio = values[i] / weights[i]
+        items.append((ratio, values[i], weights[i], i + 1))
+    items.sort(reverse=True)
+    total_value = 0.0
+    print("Items sorted by value/weight ratio:")
+    for ratio, value, weight, item_no in items:
+        print("Item", item_no,"Weight:", weight,"Value:", value,"Ratio:", ratio)
+    print("\nSelection:")
+    for ratio, value, weight, item_no in items:
+        if capacity >= weight:
+            capacity -= weight
+            total_value += value
+            print("Item", item_no, ": Full item taken")
+        else:
+            fraction = capacity / weight
+            total_value += ratio * capacity
+            print("Item", item_no,":", fraction,"of item taken")
+            capacity = 0
+            break
+    return total_value
+weights = [10, 20, 30, 40]
+values = [60, 100, 120, 160]
+capacity = 50
+result = fractional_knapsack(capacity, weights, values)
+print("\nMaximum value:", result)
+
+
+4. Apply Fractional Knapsack to solve an investment
+allocation problem (maximize return with limited
+budget).
+
+def fractional_knapsack(budget, investments):
+    items = []
+    for name, amount, return_value in investments:
+        ratio = return_value / amount
+        items.append((ratio, name, amount, return_value))
+    items.sort(reverse=True)
+    total_return = 0.0
+    for ratio, name, amount, return_value in items:
+        if budget >= amount:
+            budget -= amount
+            total_return += return_value
+        else:
+            fraction = budget / amount
+            total_return += ratio * budget
+            budget = 0
+    return total_return
+investments = [
+    ("Project A", 20000, 30000),
+    ("Project B", 10000, 18000),
+    ("Project C", 30000, 36000),
+    ("Project D", 15000, 21000)
+]
+budget = 40000
+result = fractional_knapsack(budget, investments)
+print("Maximum expected return:", result)
+
+
+
+5. Implement Fractional Knapsack and display
+intermediate steps of item selection.
+
+def fractional_knapsack(capacity, weights, values):
+    n = len(values)
+    items = []
+    for i in range(n):
+        ratio = values[i] / weights[i]
+        items.append((ratio, values[i], weights[i], i + 1))
+    items.sort(reverse=True)
+    total_value = 0.0
+    print("Items sorted by value/weight ratio:")
+    print()
+    for ratio, value, weight, item_no in items:
+        print("Item", item_no,"Weight =", weight,"Value =", value,"Ratio =", round(ratio, 2))
+    print("\nSelecting items:")
+    print()
+    for ratio, value, weight, item_no in items:
+        if capacity >= weight:
+            capacity -= weight
+            total_value += value
+            print("Item", item_no, "fully selected")
+            print("Weight used:", weight)
+            print("Remaining capacity:", capacity)
+            print("Current value:", total_value)
+            print()
+        else:
+            fraction = capacity / weight
+            added_value = ratio * capacity
+            total_value += added_value
+            print("Item", item_no, "partially selected")
+            print("Fraction selected:", round(fraction, 2))
+            print("Weight used:", capacity)
+            print("Value added:", round(added_value, 2))
+            capacity = 0
+            break
+    return total_value
+values = [100, 60, 120]
+weights = [20, 10, 30]
+capacity = 50
+result = fractional_knapsack(capacity,weights,values)
+print("Maximum total value:", result)
+
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+5. 0/1 Knapsack (Dynamic Programming)
+1. Implement the 0/1 Knapsack problem using
+Dynamic Programming.
+
+def knapsack(w, val, wt):
+    n = len(val)
+    dp = [[0 for _ in range(w + 1)] for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for capacity in range(1, w + 1):
+            if wt[i - 1] <= capacity:
+                pick = val[i - 1] + dp[i - 1][capacity - wt[i - 1]]
+                notPick = dp[i - 1][capacity]
+                dp[i][capacity] = max(pick, notPick)
+            else:
+                dp[i][capacity] = dp[i - 1][capacity]
+    return dp[n][w]
+val = [1, 7, 11]
+wt = [1, 2, 3]
+w = 5
+result = knapsack(w, val, wt)
+print("Maximum value:", result)
+
+
+2. Solve 0/1 Knapsack for given items and capacity,
+displaying the DP table.
+
+def knapsack(w, val, wt):
+    n = len(val)
+    dp = [[0 for _ in range(w + 1)] for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for capacity in range(1, w + 1):
+            if wt[i - 1] <= capacity:
+                pick = val[i - 1] + dp[i - 1][capacity - wt[i - 1]]
+                notPick = dp[i - 1][capacity]
+                dp[i][capacity] = max(pick, notPick)
+            else:
+                dp[i][capacity] = dp[i - 1][capacity]
+    print("DP Table:")
+    for row in dp:
+        print(row)
+    return dp[n][w]
+val = [1, 7, 11]
+wt = [1, 2, 3]
+w = 5
+result = knapsack(w, val, wt)
+print("\nMaximum value:", result)
+
+3. Write a program to find the maximum profit using
+0/1 Knapsack with user input values.
+
+def knapsack(w, val, wt):
+    n = len(val)
+    dp = [[0 for _ in range(w + 1)] for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for capacity in range(1, w + 1):
+            if wt[i - 1] <= capacity:
+                pick = val[i - 1] + dp[i - 1][capacity - wt[i - 1]]
+                notPick = dp[i - 1][capacity]
+                dp[i][capacity] = max(pick, notPick)
+            else:
+                dp[i][capacity] = dp[i - 1][capacity]
+    return dp[n][w]
+n = int(input("Enter number of items: "))
+val = []
+wt = []
+for i in range(n):
+    print("\nItem", i + 1)
+    value = int(input("Enter value: "))
+    weight = int(input("Enter weight: "))
+    val.append(value)
+    wt.append(weight)
+w = int(input("\nEnter knapsack capacity: "))
+result = knapsack(w, val, wt)
+print("\nMaximum profit:", result)
+
+
+4. Apply 0/1 Knapsack to a resource allocation
+problem with capacity restrictions.
+
+def knapsack(capacity, values, weights):
+    n = len(values)
+    dp = [[0 for _ in range(capacity + 1)]
+          for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for current_capacity in range(1, capacity + 1):
+            if weights[i - 1] <= current_capacity:
+                pick = (values[i - 1] + dp[i - 1][current_capacity - weights[i - 1]])
+                notPick = dp[i - 1][current_capacity]
+                dp[i][current_capacity] = max(pick,notPick)
+            else:
+                dp[i][current_capacity] = (dp[i - 1][current_capacity])
+    return dp[n][capacity]
+projects = [
+    ("Project A", 60, 10),
+    ("Project B", 100, 20),
+    ("Project C", 120, 30),
+    ("Project D", 80, 15)
+]
+values = []
+weights = []
+for name, value, weight in projects:
+    values.append(value)
+    weights.append(weight)
+capacity = 50
+result = knapsack(capacity, values, weights)
+print("Maximum resource allocation benefit:", result)
+
+
+5. Implement 0/1 Knapsack and compare results with
+the greedy method.
+
+def knapsack_dp(capacity, values, weights):
+    n = len(values)
+    dp = [[0 for _ in range(capacity + 1)]
+          for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for current_capacity in range(1, capacity + 1):
+            if weights[i - 1] <= current_capacity:
+                pick = (values[i - 1] + dp[i - 1][current_capacity - weights[i - 1]])
+                notPick = dp[i - 1][current_capacity]
+                dp[i][current_capacity] = max(pick,notPick)
+            else:
+                dp[i][current_capacity] = (dp[i - 1][current_capacity])
+    return dp[n][capacity]
+def greedy_knapsack(capacity, values, weights):
+    items = []
+    for i in range(len(values)):
+        ratio = values[i] / weights[i]
+        items.append((ratio, values[i], weights[i]))
+    items.sort(reverse=True)
+    total_value = 0
+    for ratio, value, weight in items:
+        if weight <= capacity:
+            capacity -= weight
+            total_value += value
+    return total_value
+values = [100, 120, 60]
+weights = [20, 30, 10]
+capacity = 50
+dp_result = knapsack_dp(capacity,values,weights)
+greedy_result = greedy_knapsack(capacity,values,weights)
+print("0/1 Knapsack using DP:", dp_result)
+print("Greedy approach:", greedy_result)
+
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+6. Matrix Chain Multiplication (Dynamic Programming)
+1. Implement Matrix Chain Multiplication using
+Dynamic Programming.
+
+mc = [[-1 for n in range(50)] for m in range(50)]
+def DynamicProgramming(c, i, j):
+    if i == j:
+        return 0
+    if mc[i][j] != -1:
+        return mc[i][j]
+    mc[i][j] = 999999
+    for k in range(i, j):
+        mc[i][j] = min(mc[i][j], DynamicProgramming(c, i, k) + DynamicProgramming(c, k + 1, j) + c[i - 1] * c[k] * c[j])
+    return mc[i][j]
+def Matrix(c, n):
+    return DynamicProgramming(c, 1, n - 1)
+arr = [5, 10, 15, 20, 25]
+n = len(arr)
+print("Minimum number of multiplications is:")
+print(Matrix(arr, n))
+
+2. Find the minimum number of scalar multiplications
+needed for multiplying given matrices.
+
+mc = [[-1 for n in range(50)] for m in range(50)]
+def DynamicProgramming(c, i, j):
+    if i == j:
+        return 0
+    if mc[i][j] != -1:
+        return mc[i][j]
+    mc[i][j] = 999999
+    for k in range(i, j):
+        cost = (DynamicProgramming(c, i, k) + DynamicProgramming(c, k + 1, j) + c[i - 1] * c[k] * c[j])
+        mc[i][j] = min(mc[i][j], cost)
+    return mc[i][j]
+def Matrix(c, n):
+    return DynamicProgramming(c, 1, n - 1)
+n = int(input("Enter number of matrices: "))
+arr = []
+for i in range(n + 1):
+    arr.append(int(input("Enter dimension: ")))
+print("Minimum number of scalar multiplications is:")
+print(Matrix(arr, n + 1))
+
+
+3. Write a program to display the optimal
+parenthesization of matrix multiplication.
+
+mc = [[-1 for n in range(50)] for m in range(50)]
+pos = [[-1 for n in range(50)] for m in range(50)]
+def DynamicProgramming(c, i, j):
+    if i == j:
+        return 0
+    if mc[i][j] != -1:
+        return mc[i][j]
+    mc[i][j] = 999999
+    for k in range(i, j):
+        cost = (DynamicProgramming(c, i, k) +DynamicProgramming(c, k + 1, j) + c[i - 1] * c[k] * c[j])
+        if cost < mc[i][j]:
+            mc[i][j] = cost
+            pos[i][j] = k
+    return mc[i][j]
+def Parenthesis(i, j):
+    if i == j:
+        return "A" + str(i)
+    k = pos[i][j]
+    left = Parenthesis(i, k)
+    right = Parenthesis(k + 1, j)
+    return "(" + left + " x " + right + ")"
+def Matrix(c, n):
+    return DynamicProgramming(c, 1, n - 1)
+arr = [5, 10, 15, 20, 25]
+n = len(arr)
+print("Minimum number of multiplications is:")
+print(Matrix(arr, n))
+print("Optimal Parenthesization is:")
+print(Parenthesis(1, n - 1))
+
+
+4. Solve Matrix Chain Multiplication for different
+dimensions entered by the user.
+
+mc = [[-1 for n in range(50)] for m in range(50)]
+def DynamicProgramming(c, i, j):
+    if i == j:
+        return 0
+    if mc[i][j] != -1:
+        return mc[i][j]
+    mc[i][j] = 999999
+    for k in range(i, j):
+        mc[i][j] = min(mc[i][j], DynamicProgramming(c, i, k) +DynamicProgramming(c, k + 1, j) + c[i - 1] * c[k] * c[j])
+    return mc[i][j]
+def Matrix(c, n):
+    return DynamicProgramming(c, 1, n - 1)
+n = int(input("Enter number of matrices: "))
+arr = []
+print("Enter matrix dimensions:")
+for i in range(n + 1):
+    arr.append(int(input()))
+print("Matrix dimensions are:")
+for i in range(n):
+    print("A" + str(i + 1) + " = " + str(arr[i]) + " x " + str(arr[i + 1]))
+print("Minimum number of multiplications is:")
+print(Matrix(arr, n + 1))
+
+
+5. Implement Matrix Chain Multiplication and show
+the DP table after each iteration.
+
+mc = [[0 for n in range(50)] for m in range(50)]
+def DynamicProgramming(c, i, j):
+    if i == j:
+        return 0
+    if mc[i][j] != 0:
+        return mc[i][j]
+    mc[i][j] = 999999
+    for k in range(i, j):
+        mc[i][j] = min(mc[i][j], DynamicProgramming(c, i, k) + DynamicProgramming(c, k + 1, j) + c[i - 1] * c[k] * c[j])
+        #print("Calculated cost for matrices [",i," to ",j,"]:",mc[i][j])
+    return mc[i][j]
+def Matrix(c, n):
+    i = 1
+    j = n - 1
+    return DynamicProgramming(c, i, j)
+def Display(c, n):
+    print("DP Table:")
+    for i in range(1, n):
+        for j in range(1, n):
+            if j >= i:
+                print(mc[i][j], end="\t")
+            else:
+                print("-", end="\t")
+        print()
+arr = [5, 10, 15, 20, 25]
+n = len(arr)
+result = Matrix(arr, n)
+print("-" * 40)
+print("Minimum number of multiplications is:", result)
+
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+7. Breadth-First Search (BFS)
+1. Write a program to implement BFS traversal of a
+graph using an adjacency matrix.
+
+from collections import deque
+def bfs(graph, start):
+    visited = set()
+    queue = deque([start])
+    while queue:
+        node = queue.popleft()
+        if node not in visited:
+            print(node, end=" ")
+            visited.add(node)
+            for neighbor in range(len(graph)):
+                if graph[node][neighbor] == 1 and neighbor not in visited:
+                    queue.append(neighbor)
+graph = [
+    [0, 1, 1, 0, 0],
+    [1, 0, 0, 1, 1],
+    [1, 0, 0, 0, 0],
+    [0, 1, 0, 0, 0],
+    [0, 1, 0, 0, 0]
+]
+print("BFS Traversal:")
+bfs(graph, 0)
+
+
+2. Implement BFS traversal of a graph using an
+adjacency list and display the order of visited
+nodes.
+
+from collections import deque
+def bfs(graph, start):
+    visited = set()
+    queue = deque([start])
+    visited.add(start)
+    while queue:
+        node = queue.popleft()
+        print(node, end=" ")
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A'],
+    'D': ['B'],
+    'E': ['B']
+}
+print("BFS Traversal:")
+bfs(graph, 'A')
+
+
+3. Apply BFS to find the shortest path between two
+nodes in an unweighted graph.
+
+from collections import deque
+def shortest_path(graph, start, target):
+    queue = deque([start])
+    visited = set()
+    visited.add(start)
+    parent = {}
+    parent[start] = None
+    while queue:
+        node = queue.popleft()
+        if node == target:
+            break
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                parent[neighbor] = node
+                queue.append(neighbor)
+    if target not in parent:
+        return None
+    path = []
+    current = target
+    while current is not None:
+        path.append(current)
+        current = parent[current]
+    path.reverse()
+    return path
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
+}
+start = 'A'
+target = 'F'
+path = shortest_path(graph, start, target)
+print("Shortest path:", path)
+print("Number of edges:", len(path) - 1)
+
+
+4. Use BFS to check whether a given graph is
+connected or not.
+
+from collections import deque
+def bfs(graph, start):
+    visited = set()
+    queue = deque([start])
+    visited.add(start)
+    while queue:
+        node = queue.popleft()
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+    return visited
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A'],
+    'D': ['B', 'E'],
+    'E': ['D']
+}
+visited = bfs(graph, 'A')
+print("Visited nodes:", visited)
+if len(visited) == len(graph):
+    print("Graph is connected")
+else:
+    print("Graph is not connected")
+
+
+5. Implement BFS on a real-world problem (e.g.,
+finding the shortest route between cities).
+
+from collections import deque
+def shortest_route(graph, start, destination):
+    queue = deque([start])
+    visited = set()
+    visited.add(start)
+    parent = {}
+    parent[start] = None
+    while queue:
+        city = queue.popleft()
+        if city == destination:
+            break
+        for neighbor in graph[city]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                parent[neighbor] = city
+                queue.append(neighbor)
+    if destination not in parent:
+        return None
+    route = []
+    current = destination
+    while current is not None:
+        route.append(current)
+        current = parent[current]
+    route.reverse()
+    return route
+cities = {
+    "Ahmedabad": ["Vadodara", "Rajkot"],
+    "Vadodara": ["Ahmedabad", "Surat"],
+    "Rajkot": ["Ahmedabad", "Jamnagar"],
+    "Surat": ["Vadodara", "Mumbai"],
+    "Jamnagar": ["Rajkot"],
+    "Mumbai": ["Surat"]
+}
+start = "Ahmedabad"
+destination = "Mumbai"
+route = shortest_route(cities,start,destination)
+print("Shortest route:")
+if route:
+    print(" -> ".join(route))
+    print("Number of roads:", len(route) - 1)
+else:
+    print("No route found")
+
+
+<!---------------------------------------------------------------------------------------------------------------------------->
+8. Depth-First Search (DFS)
+1. Write a program to implement DFS traversal of a
+graph using an adjacency matrix.
+
+def dfs(graph, node, visited):
+    print(node, end=" ")
+    visited[node] = True
+    for neighbor in range(len(graph)):
+        if graph[node][neighbor] == 1 and not visited[neighbor]:
+            dfs(graph, neighbor, visited)
+graph = [
+    [0, 1, 1, 0, 0],
+    [1, 0, 0, 1, 1],
+    [1, 0, 0, 0, 0],
+    [0, 1, 0, 0, 0],
+    [0, 1, 0, 0, 0]
+]
+visited = [False] * len(graph)
+print("DFS Traversal:")
+dfs(graph, 0, visited)
+
+
+2. Implement DFS traversal of a graph using an
+adjacency list and display the order of visited
+nodes.
+
+def dfs(graph, start, visited=None):
+    if visited is None:
+        visited = set()
+    print(start, end=" ")
+    visited.add(start)
+    for neighbor in graph[start]:
+        if neighbor not in visited:
+            dfs(graph, neighbor, visited)
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A'],
+    'D': ['B'],
+    'E': ['B']
+}
+print("DFS Traversal:")
+dfs(graph, 'A')
+
+
+3. Use DFS to detect cycles in a given graph.
+
+def dfs_cycle(graph, node, visited, parent):
+    visited.add(node)
+    for neighbor in graph[node]:
+        if neighbor not in visited:
+            if dfs_cycle(graph, neighbor, visited, node):
+                return True
+        elif neighbor != parent:
+            return True
+    return False
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'C'],
+    'C': ['A', 'B', 'D'],
+    'D': ['C']
+}
+visited = set()
+if dfs_cycle(graph, 'A', visited, None):
+    print("Graph contains a cycle")
+else:
+    print("Graph does not contain a cycle")
+
+
+4. Apply DFS to check whether a graph is connected
+or not.
+
+def dfs(graph, start, visited):
+    visited.add(start)
+    for neighbor in graph[start]:
+        if neighbor not in visited:
+            dfs(graph, neighbor, visited)
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A'],
+    'D': ['B', 'E'],
+    'E': ['D']
+}
+visited = set()
+dfs(graph, 'A', visited)
+print("Visited nodes:", visited)
+if len(visited) == len(graph):
+    print("Graph is connected")
+else:
+    print("Graph is not connected")
+
+
+5. Implement DFS on a tree to perform preorder,
+inorder, and postorder traversals.
+
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+def preorder(root):
+    if root is not None:
+        print(root.value, end=" ")
+        preorder(root.left)
+        preorder(root.right)
+
+def inorder(root):
+    if root is not None:
+        inorder(root.left)
+        print(root.value, end=" ")
+        inorder(root.right)
+
+def postorder(root):
+    if root is not None:
+        postorder(root.left)
+        postorder(root.right)
+        print(root.value, end=" ")
+
+root = Node('A')
+
+root.left = Node('B')
+root.right = Node('C')
+
+root.left.left = Node('D')
+root.left.right = Node('E')
+
+root.right.left = Node('F')
+root.right.right = Node('G')
+
+print("Preorder:")
+preorder(root)
+
+print("\n\nInorder:")
+inorder(root)
+
+print("\n\nPostorder:")
+postorder(root)
