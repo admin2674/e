@@ -548,7 +548,7 @@ $history = file_exists($historyFile) ? json_decode(file_get_contents($historyFil
 </html>
 
 
-<!------------------------------ images Gallery ---------------------------------->
+<!------------------------------ images Gallery json ---------------------------------->
 
 
 //index.php
