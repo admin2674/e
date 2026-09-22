@@ -1,0 +1,1467 @@
+
+
+
+
+<!------------------------------- Employee Registration Form -------------------------->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Registration Form</title>
+</head>
+<body>
+
+    <?php
+    $characters = "abcdefghijklmnopqrstuvwxyz";
+    $randomUsername = "";
+    for ($i = 1; $i <= 6; $i++) {
+        $randomIndex = rand(0, 25);
+        $randomUsername .= $characters[$randomIndex];
+    }
+    $randomUsername .= rand(1000, 9999);
+    ?>
+    <center>
+        <h2>Employee Registration Form</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <table border="3" cellpadding="10" cellspacing="20">
+                <tr>
+                    <td><label>Employee Name</label></td>
+                    <td><input type="text" name="name" required></td>
+                </tr>
+                <tr>
+                    <td><label>Username</label></td>
+                    <td>
+                        <input type="text" id="username" name="username" readonly required>
+                        <button type="button" onclick="generateUsername()">Generate User</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Email</label></td>
+                    <td><input type="email" name="email" required></td>
+                </tr>
+                <tr>
+                    <td><label>Mobile</label></td>
+                    <td><input type="text" name="mobile" required></td>
+                </tr>
+                <tr>
+                    <td><label>Department</label></td>
+                    <td>
+                        <select name="department" required>
+                            <option value="">Select Department</option>
+                            <option>HR</option>
+                            <option>Sales</option>
+                            <option>Accounts</option>
+                            <option>IT</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Salary</label></td>
+                    <td><input type="number" name="salary" required></td>
+                </tr>
+                <tr>
+                    <td><label>Profile Photo</label></td>
+                    <td><input type="file" name="image" required></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <button type="submit" name="register">Register Employee</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </center>
+    <hr>
+
+    <script>
+    function generateUsername() {
+        let suggestedUsername = "<?php echo $randomUsername; ?>";
+        let username = prompt("Edit Username if required:", suggestedUsername);
+        if (username != null && username.trim() != "") {
+            document.getElementById("username").value = username;
+        }
+    }
+    </script>
+
+    <?php
+    if (isset($_POST["register"])) {
+        $name = $_POST["name"];
+        $username = $_POST["username"];
+        $email = $_POST["email"];
+        $mobile = $_POST["mobile"];
+        $department = $_POST["department"];
+        $salary = $_POST["salary"];
+        $filename = $_FILES["image"]["name"];
+        $tempname = $_FILES["image"]["tmp_name"];
+        $filesize = $_FILES["image"]["size"];
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $allowed = ["jpg", "jpeg", "png"];
+        $maxSize = 2 * 1024 * 1024;
+        if (!in_array($extension, $allowed)) {
+            echo "<p>Only JPG, JPEG and PNG files are allowed.</p>";
+        }
+        elseif ($filesize > $maxSize) {
+            echo "<p>Maximum File Size is 2 MB.</p>";
+        } else {
+            date_default_timezone_set("Asia/Kolkata");
+            $originalName = pathinfo($filename, PATHINFO_FILENAME);
+            $newFilename = date("Y_m_d_H_i_s") . "_" . round(microtime(true) * 1000) . "_" . $originalName . "." . $extension;
+            $folder = "uploads/" . $newFilename;
+            if (move_uploaded_file($tempname, $folder)) {
+                echo "<center><h3>Employee Registered Successfully</h3>";
+                echo "<hr>";
+                echo "<img src='$folder' width='180' height='180'>";
+                echo "<p><b>Name :</b> $name</p>";
+                echo "<p><b>Username :</b> $username</p>";
+                echo "<p><b>Email :</b> $email</p>";
+                echo "<p><b>Mobile :</b> $mobile</p>";
+                echo "<p><b>Department :</b> $department</p>";
+                echo "<p><b>Salary :</b> ₹$salary</p>";
+                echo "<p><b>Photo :</b> Uploaded Successfully</p></center>";
+            } else {
+                echo "<p>Image Upload Failed.</p>";
+            }
+        }
+    }
+    ?>
+</body>
+</html>
+
+
+<!------------------------ image carousel --------------------------------------->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Carousel Upload</title>
+</head>
+<body>
+    <h2>Image Upload & Carousel</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" required>
+        <br><br>
+        <button type="submit">Upload Image</button>
+    </form>
+    <hr>
+    <?php
+    if (isset($_FILES["image"])) {
+        $filename = $_FILES["image"]["name"];
+        $tempname = $_FILES["image"]["tmp_name"];
+        $originalName = pathinfo($filename, PATHINFO_FILENAME);
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        date_default_timezone_set("Asia/Kolkata");
+        $newFilename = date("Y_m_d_H_i_s") . "_" . round(microtime(true) * 1000) . "_" . $originalName . "." . $extension;
+        if (!is_dir("carousal")) {
+            mkdir("carousal");
+        }
+        $folder = "carousal/" . $newFilename;
+        if (move_uploaded_file($tempname, $folder)) {
+            echo "Image Uploaded Successfully.";
+        } else {
+            echo "Upload Failed.";
+        }
+    }
+    ?>
+    <hr>
+    <h2>Stored Images</h2>
+    <?php
+    $images = [];
+    if (is_dir("carousal")) {
+        $files = scandir("carousal");
+        foreach ($files as $file) {
+            if ($file != "." && $file != "..") {
+                $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+                if ($extension == "jpg" || $extension == "jpeg" || $extension == "png" || $extension == "gif" || $extension == "webp") {
+                    array_push($images, "carousal/" . $file);
+                }
+            }
+        }
+    }
+    if (count($images) > 0) {
+    ?>
+    <img id="carouselImage" src="<?php echo $images[0]; ?>" alt="Uploaded Image" width="400">
+    <br><br>
+    Total Images :
+    <b><?php echo count($images); ?></b>
+    <br>
+    <script>
+    let images = <?php echo json_encode($images); ?>;
+    let index = 0;
+    setInterval(function() {
+        index++;
+        if (index >= images.length) {
+            index = 0;
+        }
+        document.getElementById("carouselImage").src = images[index];
+    }, 2000);
+    </script>
+    <?php
+    } else {
+        echo "No images found in carousal folder.";
+    }
+    ?>
+</body>
+</html>
+
+
+<!------------------------ image gallery --------------------------------------->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PHP Image Gallery</title>
+</head>
+<body>
+    <center>
+        <h2>PHP Image Gallery</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" required>
+            <button type="submit" name="upload">Upload Image</button>
+        </form>
+    </center>
+    <hr>
+    <?php
+    if (isset($_POST["upload"])) {
+        $filename = $_FILES["image"]["name"];
+        $tempname = $_FILES["image"]["tmp_name"];
+        $filesize = $_FILES["image"]["size"];
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $allowed = ["jpg", "jpeg", "png", "gif"];
+        $maxSize = 2 * 1024 * 1024;
+        if (!in_array($extension, $allowed)) {
+            echo "<center>";
+            echo "<p>Only JPG, JPEG, PNG and GIF files are allowed.</p>";
+            echo "</center>";
+        }
+        elseif ($filesize > $maxSize) {
+            echo "<center>";
+            echo "<p>Maximum file size is 2 MB.</p>";
+            echo "</center>";
+        } else {
+            $filename = $_FILES["image"]["name"];
+            $tempname = $_FILES["image"]["tmp_name"];
+            $originalName = pathinfo($filename, PATHINFO_FILENAME);
+            $extension = pathinfo($filename, PATHINFO_EXTENSION);
+            date_default_timezone_set("Asia/Kolkata");
+            $newFilename = date("Y_m_d_H_i_s") . "_" . round(microtime(true) * 1000) . "_" . $originalName . "." . $extension;
+            $folder = "uploads/" . $newFilename;
+            if (move_uploaded_file($tempname, $folder)) {
+                echo "<center>";
+                echo "<p>Image Uploaded Successfully.</p>";
+                echo "</center>";
+            } else {
+                echo "<center>";
+                echo "<p>Image Upload Failed.</p>";
+                echo "</center>";
+            }
+        }
+    }
+    if (isset($_GET["delete"])) {
+        $image = $_GET["delete"];
+        $file = "uploads/" . $image;
+        if (file_exists($file)) {
+            unlink($file);
+            echo "<center><p>Image Deleted Successfully.</p></center>";
+        }
+        header("Location: 33_image_gallary.php");
+        exit();
+    }
+    ?>
+    <hr>
+    <center>
+        <h2>My Image Gallery</h2>
+        <?php
+        $images = scandir("uploads/");
+        echo "<table border='3' cellpadding='10' cellspacing='10'>";
+        $count = 0;
+        foreach ($images as $image) {
+            if ($image == "." || $image == "..") {
+                continue;
+            }
+            $extension = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+            if ($extension == "jpg" || $extension == "jpeg" || $extension == "png" || $extension == "gif" || $extension == "webp") {
+                if ($count % 3 == 0) {
+                    echo "<tr>";
+                }
+                echo "<td align='center'>";
+                echo "<img src='uploads/$image' width='180' height='150'>";
+                echo "<br><br>";
+                echo "<b>Name: $image</b>";
+                echo "<br><br>";
+                echo "<a href='33_image_gallary.php?delete=$image'>Delete</a>";
+                echo "</td>";
+                $count++;
+                if ($count % 3 == 0) {
+                    echo "</tr>";
+                }
+            }
+        }
+        if ($count % 3 != 0) {
+            echo "</tr>";
+        }
+        echo "</table>";
+        ?>
+    </center>
+</body>
+</html>
+
+
+<!------------------------- Quiz ------------------------------------------------>
+
+
+<?php
+function displayQuestion($number, $name, $question, $options)
+{
+?>
+
+<tr>
+    <td>
+        <b><?php echo $number . ". " . $question; ?></b>
+        <br><br>
+        
+        <?php
+            foreach ($options as $option) {
+            ?>
+
+        <input type="radio" name="<?php echo $name; ?>" value="<?php echo $option; ?>">
+        <?php echo $option; ?>
+        <br>
+        
+        <?php
+            }
+            ?>
+
+    </td>
+</tr>
+
+<?php
+}
+?>
+
+<form method="POST">
+    <center>
+        <h2>PHP Quiz</h2>
+        <table border="3" cellpadding="10" cellspacing="10">
+            
+            <?php
+            displayQuestion(1, "q1", "Which programming language is mainly used for server-side web development?", ["HTML", "PHP", "CSS", "MS Word"]);
+
+            displayQuestion(2, "q2", "PHP stands for?", ["Personal Home Page", "Hyper Text Preprocessor", "Programming Home Page", "Private Home Processor"]);
+
+            displayQuestion(3, "q3", "Which PHP statement is used to display output?", ["echo", "printline", "show", "display"]);
+
+            displayQuestion(4, "q4", "Which language is used to create web pages?", ["Java", "Python", "HTML", "C++"]);
+
+            displayQuestion(5, "q5", "What is the default server name used in XAMPP?", ["google.com", "localhost", "php.net", "server"]);
+            ?>
+            
+            <tr>
+                <td align="center">
+                    <button type="submit" name="submitQuiz">Submit Quiz</button>
+                </td>
+            </tr>
+        </table>
+    </center>
+</form>
+
+<?php
+$correctAnswers = [
+    "q1" => "PHP",
+    "q2" => "Hyper Text Preprocessor",
+    "q3" => "echo",
+    "q4" => "HTML",
+    "q5" => "localhost"
+];
+
+if (isset($_POST["submitQuiz"])) {
+    $score = 0;
+
+    $totalQuestions = count($correctAnswers);
+    foreach ($correctAnswers as $question => $answer) {
+        if (isset($_POST[$question]) && $_POST[$question] == $answer) {
+            $score++;
+        }
+    }
+
+    echo "<hr>";
+    echo "<center>";
+
+    echo "<h2>Quiz Result</h2>";
+    echo "<h3>Your Score: $score / $totalQuestions</h3>";
+
+    echo "</center>";
+}
+?>
+<?php
+        $correctAnswers = [
+            "q1" => "PHP",
+            "q2" => "Hyper Text Preprocessor",
+            "q3" => "echo",
+            "q4" => "HTML",
+            "q5" => "localhost"
+        ];
+
+        if (isset($_POST["submitQuiz"])) {
+            $score = 0;
+            $totalQuestions = count($correctAnswers);
+
+            foreach ($correctAnswers as $question => $answer) {
+                if (isset($_POST[$question]) && $_POST[$question] == $answer) {
+                    $score++;
+                }
+            }
+            echo "<hr>";
+            echo "<center>";
+            echo "<h2>Quiz Result</h2>";
+            echo "<p><b>Total Questions :</b> $totalQuestions</p>";
+            echo "<p><b>Correct Answers :</b> $score</p>";
+            echo "<p><b>Wrong Answers :</b> " . ($totalQuestions - $score) . "</p>";
+            echo "<p><b>Percentage :</b> " . (($score / $totalQuestions) * 100) . "%</p>";
+            if ($score == $totalQuestions) {
+                echo "<h3 style='color:green;'>Excellent!</h3>";
+            } elseif ($score >= 3) {
+                echo "<h3 style='color:blue;'>Good Job!</h3>";
+            } else {
+                echo "<h3 style='color:red;'>Keep Practicing!</h3>";
+            }
+            echo "<hr>";
+            echo "<h3>Answer Review</h3>";
+            foreach ($correctAnswers as $question => $answer) {
+                $userAnswer = isset($_POST[$question]) ? $_POST[$question] : "Not Answered";
+                echo "<p>";
+                echo "<b>$question</b><br>";
+                echo "Your Answer : $userAnswer<br>";
+                echo "Correct Answer : $answer<br>";
+                if ($userAnswer == $answer) {
+                    echo "<span style='color:green;'>✔ Correct</span>";
+                } else {
+                    echo "<span style='color:red;'>✘ Wrong</span>";
+                }
+                echo "</p><hr>";
+            }
+            echo "</center>";
+        }
+        ?>
+
+
+<!----------------------- Counter with history ---------------------------------->
+
+
+<?php
+date_default_timezone_set("Asia/Kolkata");
+$counterFile = "counter.txt";
+$historyFile = "history.json";
+
+if (file_exists($counterFile)) {
+    $count = (int) file_get_contents($counterFile);
+} else {
+    $count = 0;
+}
+
+if (isset($_POST["inc"])) {
+    $count++;
+    file_put_contents($counterFile, $count);
+    $history = file_exists($historyFile) ? json_decode(file_get_contents($historyFile), true) : [];
+    $history[] = [
+        "date" => date("d-M-Y h:i:s A"),
+        "action" => "Increased",
+        "count" => $count
+    ];
+    file_put_contents($historyFile, json_encode($history, JSON_PRETTY_PRINT));
+}
+
+if (isset($_POST["dec"])) {
+    $count--;
+    file_put_contents($counterFile, $count);
+    $history = file_exists($historyFile) ? json_decode(file_get_contents($historyFile), true) : [];
+    $history[] = [
+        "date" => date("d-M-Y h:i:s A"),
+        "action" => "Decreased",
+        "count" => $count
+    ];
+    file_put_contents($historyFile, json_encode($history, JSON_PRETTY_PRINT));
+}
+
+if (isset($_POST["reset"])) {
+    $count = 0;
+    file_put_contents($counterFile, $count);
+    $history = file_exists($historyFile) ? json_decode(file_get_contents($historyFile), true) : [];
+    $history[] = [
+        "date" => date("d-M-Y h:i:s A"),
+        "action" => "Reset",
+        "count" => $count
+    ];
+    file_put_contents($historyFile, json_encode($history, JSON_PRETTY_PRINT));
+}
+
+if (isset($_POST["clear"])) {
+    file_put_contents($historyFile, "[]");
+}
+$history = file_exists($historyFile) ? json_decode(file_get_contents($historyFile), true) : [];
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Counter with History</title>
+</head>
+<body>
+    <div align="center">
+        <h1>Counter with History</h1>
+        <h2>Current Count: <?php echo $count; ?></h2>
+        <form method="post">
+            <button name="inc">Increase</button>
+            <button name="dec">Decrease</button>
+            <button name="reset">Reset</button>
+            <button name="clear">Clear History</button>
+        </form>
+        <br><br>
+        <h2>History Log</h2>
+        <table border="1" cellpadding="10" cellspacing="0">
+            <?php
+            if (!empty($history)) {
+                echo "<tr>
+                <th>Date & Time</th>
+                <th>Action</th>
+                <th>Counter</th>
+                    </tr>";
+                foreach ($history as $row) {
+                    echo "<tr>";
+                    echo "<td>" . $row["date"] . "</td>";
+                    echo "<td>" . $row["action"] . "</td>";
+                    echo "<td>" . $row["count"] . "</td>";
+                    echo "</tr>";
+                }
+            } else {
+                echo "<tr>";
+                echo "<td colspan='3'>No History Available</td>";
+                echo "</tr>";
+            }
+            ?>
+        </table>
+    </div>
+</body>
+</html>
+
+
+<!------------------------------ images Gallery ---------------------------------->
+
+
+//index.php
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PHP Image Gallery</title>
+</head>
+
+<body>
+    <center>
+        <h1>PHP Image Gallery</h1>
+        <h2>Navigation</h2>
+        <p>Press <b>1</b> to Upload Image</p>
+        <p>Press <b>2</b> to Delete Image</p>
+        <hr>
+        <a href="upload.php">1. Upload Image</a>
+        <br><br>
+        <a href="delete.php">2. Delete Image</a>
+    </center>
+
+    <script>
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "1") {
+            window.location.href = "upl  oad.php";
+        }
+        if (event.key === "2") {
+            window.location.href = "delete.php";
+        }
+    });
+    </script>
+</body>
+</html>
+
+
+//upload.php
+<?php
+if (isset($_POST["upload"])) {
+    $filename = $_FILES["image"]["name"];
+    $tempname = $_FILES["image"]["tmp_name"];
+    $filesize = $_FILES["image"]["size"];
+    $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    $allowed = ["jpg", "jpeg", "png", "gif"];
+    $maxSize = 2 * 1024 * 1024;
+    if (!in_array($extension, $allowed)) {
+        echo "<center><p>Only JPG, JPEG, PNG and GIF files are allowed.</p></center>";
+    } elseif ($filesize > $maxSize) {
+        echo "<center><p>Maximum file size is 2 MB.</p></center>";
+    } else {
+        $originalName = pathinfo($filename, PATHINFO_FILENAME);
+        date_default_timezone_set("Asia/Kolkata");
+        $newFilename = date("Y_m_d_H_i_s") . "_" . round(microtime(true) * 1000) . "_" . $originalName . "." . $extension;
+        $folder = "uploads/" . $newFilename;
+        if (move_uploaded_file($tempname, $folder)) {
+            echo "<center><p>Image Uploaded Successfully.</p></center>";
+        } else {
+            echo "<center><p>Image Upload Failed.</p></center>";
+        }
+    }
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Image</title>
+</head>
+<body>
+<center>
+    <h2>Upload Image</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" required>
+        <br><br>
+        <button type="submit" name="upload">Upload Image</button>
+    </form>
+
+    <br>
+    <p>Press <b>Backspace</b> to return to Home</p>
+</center>
+<script>
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Backspace") {
+        event.preventDefault();
+        window.location.href = "index.php";
+    }
+});
+</script>
+</body>
+</html>
+
+
+// delete.php
+<?php
+if (isset($_GET["delete"])) {
+    $image = $_GET["delete"];
+    $file = "uploads/" . $image;
+    if (file_exists($file)) {
+        unlink($file);
+    }
+    header("Location: delete.php");
+    exit();
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Image</title>
+</head>
+<body>
+    <center>
+        <h2>Delete Image</h2>
+        <p>Press <b>Backspace</b> to return to Home</p>
+        <hr>
+        <?php
+        $images = scandir("uploads/");
+        echo "<table border='3' cellpadding='10' cellspacing='10'>";
+        $count = 0;
+        foreach ($images as $image) {
+            if ($image == "." || $image == "..") {
+                continue;
+            }
+            $extension = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+            if ($extension == "jpg" || $extension == "jpeg" || $extension == "png" || $extension == "gif" || $extension == "webp") {
+                if ($count % 3 == 0) {
+                    echo "<tr>";
+                }
+                echo "<td align='center'>";
+                echo "<img src='uploads/" . htmlspecialchars($image) . "' width='180' height='150'>";
+                echo "<br><br>";
+                echo "<b>" . htmlspecialchars($image) . "</b>";
+                echo "<br><br>";
+                echo "<a href='delete.php?delete=" . urlencode($image) . "'>Delete</a>";
+                echo "</td>";
+                $count++;
+                if ($count % 3 == 0) {
+                    echo "</tr>";
+                }
+            }
+        }
+        if ($count % 3 != 0) {
+            echo "</tr>";
+        }
+        echo "</table>";
+        ?>
+    </center>
+    <script>
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Backspace") {
+            event.preventDefault();
+            window.location.href = "index.php";
+        }
+    });
+    </script>
+</body>
+</html>
+
+
+<!------------------------------ Text Image Form ------------------------------->
+
+// index.php
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PHP Mini Notes Website</title>
+</head>
+
+<body>
+    <center>
+        <h1>PHP Mini Notes</h1>
+        <h2>Navigation</h2>
+        <p>Press <b>1</b> to Add Note</p>
+        <p>Press <b>2</b> to Delete Note</p>
+        <hr>
+        <a href="add.php">1. Add Note</a>
+        <br><br>
+        <a href="delete.php">2. Delete Note</a>
+    </center>
+    <script>
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "1") window.location.href =
+                "add.php";
+            if (event.key === "2") window.location.href =
+                "delete.php";
+        });
+    </script>
+</body>
+
+</html>
+
+
+// add.php
+<?php
+if (isset($_POST["add"])) {
+    $text = trim($_POST["text"]);
+    $imageName = "";
+    if ($text == "") {
+        echo "<center><p>Please enter some text.</p></center>";
+    } else {
+        if (!empty($_FILES["image"]["name"])) {
+            $filename = $_FILES["image"]["name"];
+            $tempname = $_FILES["image"]["tmp_name"];
+            $filesize = $_FILES["image"]["size"];
+            $extension = strtolower(pathinfo(
+                $filename,
+                PATHINFO_EXTENSION
+            ));
+            $allowed = ["jpg", "Jpeg", "png", "gif", "webp"];
+            if (!in_array($extension, $allowed)) {
+                echo "<center><p>Only JPG, JPEG, PNG, GIF and
+                    WEBP files are allowed.</p></center>";
+                exit();
+            }
+            if ($filesize > 2 * 1024 * 1024) {
+                echo "<center><p>Maximum image size is 2
+                    MB.</p></center>";
+                exit();
+            }
+            date_default_timezone_set("Asia/Kolkata");
+            $imageName = date("Y_m_d_H i s") . "_" . round(microtime(true) * 1000) . "." . $extension;
+            if (!move_uploaded_file($tempname, "uploads/" .
+                $imageName)) {
+                echo "<center><p>Failed to upload image.</p></center>";
+                exit();
+            }
+        }
+        $notes = json_decode(file_get_contents("notes.json"), true);
+        $notes[] = [
+            "id" => round(microtime(true) * 1000),
+            "text" => $text,
+            "image" => $imageName,
+            "date" => date("d-m-Y h:i A")
+        ];
+        file_put_contents("notes.json", json_encode($notes, JSON_PRETTY_PRINT));
+        echo "<center><p>Note Added Successfully.</p></center>";
+    }
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Note</title>
+</head>
+<body>
+    <center>
+        <h2>Add Note</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <textarea name="text" rows="6" cols="50" placeholder="Write your note..." required></textarea>
+            <br><br>
+            <input type="file" name="image" accept="image/*">
+            <br><br>
+            <button type="submit" name="add">Add Note</button>
+        </form>
+        <br>
+        <p>Press <b>Backspace</b> to return to Home</p>
+    </center>
+    <script>
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Backspace") {
+            event.preventDefault();
+            window.location.href = "index.php";
+        }
+    });
+    </script>
+</body>
+</html>
+
+
+// delete.php
+<?php
+if (isset($_GET["delete"])) {
+    $id = $_GET["delete"];
+    $notes = json_decode(file_get_contents("notes.json"), true);
+    $newNotes = [];
+    foreach ($notes as $note) {
+        if ($note["id"] == $id) {
+            if ($note["image"] != "") {
+                unlink("uploads/" . $note["image"]);
+            }
+        } else {
+            $newNotes[] = $note;
+        }
+    }
+    file_put_contents("notes.json", json_encode($newNotes, JSON_PRETTY_PRINT));
+    header("Location: delete.php");
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Notes</title>
+</head>
+<body>
+    <center>
+        <h2>My Notes</h2>
+        <p>Press <b>Backspace</b> to return to Home</p>
+        <hr>
+        <?php
+        $notes = json_decode(
+            file_get_contents("notes.json"),
+            true
+        );
+        if (empty($notes)) {
+            echo "<p>No notes available.</p>";
+        } else {
+            echo "<table border='3' cellspacing='10' cellpadding='10'>";
+            $count = 9;
+            foreach ($notes as $note) {
+                if ($count % 3 == 0) {
+                    echo "<tr>";
+                }
+                echo "<td align='center' valign='top' width='2508'>";
+                echo "<p>" . nl2br($note["text"]) . "</p>";
+                if ($note["image"] != "") {
+                    echo "<img src='uploads/" . $note["image"] . "' width='220' height='160'>";
+                    echo "<br><br>";
+                }
+                echo "<small>" . $note["date"] . "</small>";
+                echo "<br><br>";
+                echo "<a href='delete.php?delete=" . $note["id"] . "'>Delete</a>";
+                echo "</td>";
+                $count++;
+                if ($count % 3 == 0) {
+                    echo "</tr>";
+                }
+            }
+            if ($count % 3 != 0) {
+                echo "</tr>";
+            }
+            echo "</table>";
+        }
+        ?>
+    </center>
+    <script>
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Backspace") {
+                event.preventDefault();
+                window.location.href = "index.php";
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+<!------------------------- Text only Form -------------------------------------->
+
+
+// index.php
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSON Database</title>
+</head>
+<body>
+    <center>
+        <h1>JSON Database</h1>
+        <h2>Navigation</h2>
+        <p>Press <b>1</b> to Add Person</p>
+        <p>Press <b>2</b> to Delete Person</p>
+        <hr>
+        <a href="add.php">1. Add Person</a>
+        <br><br>
+        <a href="delete.php">2. Delete Person</a>
+    </center>
+    <script>
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "1") {
+                window.location.href = "add.php";
+            }
+            if (event.key === "2") {
+                window.location.href = "delete.php";
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+// add.php
+<?php
+if (isset($_POST["add"])) {
+    $data = json_decode(file_get_contents("data.json"), true);
+    date_default_timezone_set("Asia/Kolkata");
+    $data[] = [
+        "name" => $_POST["name"],
+        "date" => date("d-m-Y h:i A")
+    ];
+    file_put_contents("data.json", json_encode($data, JSON_PRETTY_PRINT));
+    header("Location: delete.php");
+    exit();
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Person</title>
+</head>
+<body>
+    <center>
+        <h2>Add Person</h2>
+        <p>Press <b>Backspace</b> to return to Home</p>
+        <hr>
+        <form method="POST">
+            <input type="text" name="name" placeholder="Enter name" autofocus>
+            <button type="submit" name="add">Add</button>
+        </form>
+    </center>
+    <script>
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Backspace") {
+                window.location.href = "index.php";
+            }
+        });
+    </script>
+</body>
+</html>
+
+// delete.php
+<?php
+if (isset($_GET["delete"])) {
+    $data = json_decode(file_get_contents("data.json"), true);
+    unset($data[$_GET["delete"]]);
+    file_put_contents(
+        "data.json",
+        json_encode(array_values($data), JSON_PRETTY_PRINT)
+    );
+    header("Location: delete.php");
+    exit();
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Person</title>
+</head>
+<body>
+    <center>
+        <h2>Delete Person</h2>
+        <p>Press <b>Backspace</b> to return to Home</p>
+        <hr>
+        <?php
+        $data = json_decode(
+            file_get_contents("data.json"),
+            true
+        );
+        echo "<table border='3' cellpadding='10' cellspacing='10'>";
+        echo "<tr><th>Name</th><th>Date</th><th>Action</th></tr>";
+        foreach ($data as $index => $person) {
+            echo "<tr>";
+            echo "<td>" . $person["name"] . "</td>";
+            echo "<td>" . $person["date"] . "</td>";
+            echo "<td><a href='delete.php?delete=" . $index . "'>Delete</a></td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+        ?>
+    </center>
+    <script>
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Backspace") {
+                window.location.href = "index.php";
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+<!------------------------ SQL Sample Questions 1 --------------------------------------------->
+
+<?php
+$conn = mysqli_connect('localhost', 'root', '');
+if (!$conn)
+    die('DB connection failed');
+
+mysqli_query($conn, 'CREATE DATABASE IF NOT EXISTS hotel_db');
+$conn = mysqli_connect('localhost', 'root', '', 'hotel_db');
+if (!$conn)
+    die('DB connection failed');
+
+mysqli_query($conn, "CREATE TABLE IF NOT EXISTS hotel_rooms (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_number INT UNIQUE,
+    room_type VARCHAR(255),
+    floor_number INT,
+    bed_count INT,
+    nightly_rate INT,
+    room_status VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
+if (isset($_POST['insert'])) {
+    $roomNumber = $_POST['room_number'];
+    $roomType = $_POST['room_type'];
+    $floorNumber = $_POST['floor_number'];
+    $bedCount = $_POST['bed_count'];
+    $nightlyRate = $_POST['nightly_rate'];
+    $roomStatus = $_POST['room_status'];
+
+    if (empty($roomType) || $nightlyRate <= 0) {
+        echo 'Please enter valid room details.<br>';
+    } else {
+        $sql = "INSERT INTO hotel_rooms
+                (room_number, room_type, floor_number, bed_count, nightly_rate, room_status)
+                VALUES ($roomNumber, '$roomType', $floorNumber, $bedCount, $nightlyRate, '$roomStatus')";
+
+        if (mysqli_query($conn, $sql))
+            echo 'Room inserted successfully.<br>';
+        else
+            echo 'Room number already exists.<br>';
+    }
+}
+
+if (isset($_POST['update'])) {
+    $id = $_POST['id'];
+    $newStatus = $_POST['new_status'];
+
+    $check = mysqli_query($conn, "SELECT * FROM hotel_rooms WHERE id = $id");
+    if (mysqli_num_rows($check) == 0) {
+        echo 'Room ID does not exist.<br>';
+    } else {
+        mysqli_query($conn, "UPDATE hotel_rooms SET room_status = '$newStatus' WHERE id = $id");
+        $row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM hotel_rooms WHERE id = $id"));
+        echo 'Updated room:<br>';
+        echo $row['id'] . ' | ' . $row['room_number'] . ' | ' . $row['room_type'] . ' | ' . $row['room_status'] . '<br>';
+    }
+}
+?>
+
+<h3>Insert Hotel Room</h3>
+<form method="post">
+    Room Number: <input type="number" name="room_number"><br>
+    Room Type: <input type="text" name="room_type"><br>
+    Floor Number: <input type="number" name="floor_number"><br>
+    Bed Count: <input type="number" name="bed_count"><br>
+    Nightly Rate: <input type="number" name="nightly_rate"><br>
+    Room Status:
+    <select name="room_status">
+        <option>Available</option>
+        <option>Occupied</option>
+        <option>Maintenance</option>
+    </select><br>
+    <input type="submit" name="insert" value="Insert Room">
+</form>
+
+<h3>Update Room Status</h3>
+<form method="post">
+    Room ID: <input type="number" name="id"><br>
+    New Status:
+    <select name="new_status">
+        <option>Available</option>
+        <option>Occupied</option>
+        <option>Maintenance</option>
+    </select><br>
+    <input type="submit" name="update" value="Update Status">
+</form>
+
+<!------------------------ SQL Sample Questions 2 --------------------------------------------->
+
+
+<?php
+$conn = mysqli_connect('localhost', 'root', '');
+if (!$conn)
+    die('DB connection failed');
+
+mysqli_query($conn, 'CREATE DATABASE IF NOT EXISTS cinema_db');
+$conn = mysqli_connect('localhost', 'root', '', 'cinema_db');
+if (!$conn)
+    die('DB connection failed');
+
+mysqli_query($conn, "CREATE TABLE IF NOT EXISTS reservations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(255),
+    customer_email VARCHAR(255),
+    movie_title VARCHAR(255),
+    show_date VARCHAR(255),
+    show_time VARCHAR(255),
+    number_of_seats INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
+if (isset($_POST['insert'])) {
+    $name = $_POST['customer_name'];
+    $email = $_POST['customer_email'];
+    $movie = $_POST['movie_title'];
+    $date = $_POST['show_date'];
+    $time = $_POST['show_time'];
+    $seats = $_POST['number_of_seats'];
+
+    if (
+        empty($name) || empty($email) || empty($movie) || empty($date) ||
+        empty($time) || $seats <= 0
+    ) {
+        echo 'Please enter valid reservation details.<br>';
+    } else {
+        mysqli_query($conn, "INSERT INTO reservations
+            (customer_name, customer_email, movie_title, show_date, show_time, number_of_seats)
+            VALUES ('$name', '$email', '$movie', '$date', '$time', $seats)");
+        echo 'Reservation inserted successfully.<br>';
+    }
+}
+
+if (isset($_POST['delete'])) {
+    $id = $_POST['id'];
+    mysqli_query($conn, "DELETE FROM reservations WHERE id = $id");
+    echo 'Reservation deleted if the ID existed.<br>';
+}
+?>
+
+<h3>Make Reservation</h3>
+<form method="post">
+    Customer Name: <input type="text" name="customer_name"><br>
+    Customer Email: <input type="email" name="customer_email"><br>
+    Movie Title: <input type="text" name="movie_title"><br>
+    Show Date: <input type="text" name="show_date"><br>
+    Show Time: <input type="text" name="show_time"><br>
+    Number of Seats: <input type="number" name="number_of_seats"><br>
+    <input type="submit" name="insert" value="Reserve">
+</form>
+
+<h3>Delete Reservation</h3>
+<form method="post">
+    Reservation ID: <input type="number" name="id"><br>
+    <input type="submit" name="delete" value="Delete">
+</form>
+
+<h3>All Reservations</h3>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Movie</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Seats</th>
+        <th>Created At</th>
+    </tr>
+    <?php
+    $result = mysqli_query($conn, 'SELECT * FROM reservations');
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo '<tr>';
+        echo '<td>' . $row['id'] . '</td>';
+        echo '<td>' . $row['customer_name'] . '</td>';
+        echo '<td>' . $row['customer_email'] . '</td>';
+        echo '<td>' . $row['movie_title'] . '</td>';
+        echo '<td>' . $row['show_date'] . '</td>';
+        echo '<td>' . $row['show_time'] . '</td>';
+        echo '<td>' . $row['number_of_seats'] . '</td>';
+        echo '<td>' . $row['created_at'] . '</td>';
+        echo '</tr>';
+    }
+    ?>
+</table>
+
+
+<!------------------------ SQL Sample Questions 3 --------------------------------------------->
+
+<?php
+$conn = mysqli_connect('localhost', 'root', '');
+if (!$conn)
+    die('DB connection failed');
+
+mysqli_query($conn, 'CREATE DATABASE IF NOT EXISTS book_search_db');
+$conn = mysqli_connect('localhost', 'root', '', 'book_search_db');
+if (!$conn)
+    die('DB connection failed');
+
+mysqli_query($conn, "CREATE TABLE IF NOT EXISTS book_search_records (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    book_title VARCHAR(255),
+    author_name VARCHAR(255),
+    publisher_name VARCHAR(255),
+    publication_year INT,
+    available_copies INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
+if (isset($_POST['insert'])) {
+    $title = $_POST['book_title'];
+    $author = $_POST['author_name'];
+    $publisher = $_POST['publisher_name'];
+    $year = $_POST['publication_year'];
+    $copies = $_POST['available_copies'];
+
+    if (
+        empty($title) || empty($author) || empty($publisher) ||
+        $year <= 0 || $copies <= 0
+    ) {
+        echo 'Please enter valid book details.<br>';
+    } else {
+        mysqli_query($conn, "INSERT INTO book_search_records
+            (book_title, author_name, publisher_name, publication_year, available_copies)
+            VALUES ('$title', '$author', '$publisher', $year, $copies)");
+        echo 'Book inserted successfully.<br>';
+    }
+}
+
+if (isset($_POST['search'])) {
+    $search = $_POST['search_title'];
+    $result = mysqli_query($conn, "SELECT * FROM book_search_records WHERE book_title = '$search'");
+
+    if (mysqli_num_rows($result) == 0) {
+        echo 'No book found.<br>';
+    } else {
+        while ($row = mysqli_fetch_assoc($result)) {
+            echo $row['id'] . ' | ' . $row['book_title'] . ' | ' .
+                $row['author_name'] . ' | ' . $row['publisher_name'] . ' | ' .
+                $row['publication_year'] . ' | ' . $row['available_copies'] . ' | ' .
+                $row['created_at'] . '<br>';
+        }
+    }
+}
+
+$showAllBooks = !isset($_POST['search']);
+?>
+
+<h3>Insert Book</h3>
+<form method="post">
+    Book Title: <input type="text" name="book_title"><br>
+    Author Name: <input type="text" name="author_name"><br>
+    Publisher Name: <input type="text" name="publisher_name"><br>
+    Publication Year: <input type="number" name="publication_year"><br>
+    Available Copies: <input type="number" name="available_copies"><br>
+    <input type="submit" name="insert" value="Insert Book">
+</form>
+
+<h3>Search Book by Exact Title</h3>
+<form method="post">
+    Book Title: <input type="text" name="search_title"><br>
+    <input type="submit" name="search" value="Search">
+</form>
+
+<h3>All Books</h3>
+<?php
+if ($showAllBooks) {
+    $result = mysqli_query($conn, 'SELECT * FROM book_search_records');
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo $row['id'] . ' | ' . $row['book_title'] . ' | ' .
+            $row['author_name'] . ' | ' . $row['publisher_name'] . ' | ' .
+            $row['publication_year'] . ' | ' . $row['available_copies'] . ' | ' .
+            $row['created_at'] . '<br>';
+    }
+}
+?>
+
+
+<!------------------------ SQL FROM --------------------------------------------------------------------->
+
+<?php
+$conn = mysqli_connect("localhost", "root", "");
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+echo "MySQL Server Connected.<br>";
+
+$sql = "CREATE DATABASE IF NOT EXISTS database_form";
+if (mysqli_query($conn, $sql)) {
+    echo "Database created successfully.<br>";
+} else {
+    echo "Database creation failed.<br>";
+}
+
+mysqli_select_db($conn, "database_form");
+
+$sql = "CREATE TABLE IF NOT EXISTS employees ( 
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    name VARCHAR(100) NOT NULL, 
+    email VARCHAR(100) NOT NULL 
+    )";
+if (mysqli_query($conn, $sql)) {
+    echo "Table created successfully.<br><br>";
+} else {
+    echo "Table creation failed.<br><br>";
+}
+
+if (isset($_POST["add"])) {
+    $name = $_POST["name"];
+    $email = $_POST["email"];
+    $sql = "INSERT INTO employees (name, email) VALUES ('$name', '$email')";
+    if (mysqli_query($conn, $sql)) {
+        echo "Employee added successfully.<br><br>";
+    } else {
+        echo "Employee not added.<br><br>";
+    }
+}
+
+if (isset($_POST["update"])) {
+    $id = $_POST["id"];
+    $name = $_POST["name"];
+    $email = $_POST["email"];
+    $sql = "UPDATE employees SET name = '$name', email = '$email' WHERE id = $id";
+    if (mysqli_query($conn, $sql)) {
+        echo "Employee updated successfully.<br><br>";
+    } else {
+        echo "Employee not updated.<br><br>";
+    }
+}
+
+if (isset($_POST["delete"])) {
+    $id = $_POST["id"];
+    $sql = "DELETE FROM employees WHERE id = $id";
+    if (mysqli_query($conn, $sql)) {
+        echo "Employee deleted successfully.<br><br>";
+    } else {
+        echo "Employee not deleted.<br><br>";
+    }
+}
+
+if (isset($_POST["search"])) {
+    $name = $_POST["search_name"];
+    $sql = "SELECT * FROM employees WHERE name = '$name'";
+    $result = mysqli_query($conn, $sql);
+    echo "<h3>Search Result</h3>";
+    if (mysqli_num_rows($result) > 0) {
+        echo "<table border='3' cellpadding='8' cellspacing='0'>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>";
+        while ($row = mysqli_fetch_assoc($result)) {
+            echo "<tr>";
+            echo "<td>" . $row["id"] . "</td>";
+            echo "<td>" . $row["name"] . "</td>";
+            echo "<td>" . $row["email"] . "</td>";
+            echo "</tr>";
+        }
+        echo "</table><br>";
+    } else {
+        echo "Employee not found.<br><br>";
+    }
+}
+
+if (isset($_POST["display"])) {
+    $sql = "SELECT * FROM employees";
+    $result = mysqli_query($conn, $sql);
+    echo "<h3>All Employees</h3>";
+    if (mysqli_num_rows($result) > 0) {
+        echo "<table border='3' cellpadding='8' cellspacing='0'>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>";
+        while ($row = mysqli_fetch_assoc($result)) {
+            echo "<tr>";
+            echo "<td>" . $row["id"] . "</td>";
+            echo "<td>" . $row["name"] . "</td>";
+            echo "<td>" . $row["email"] . "</td>";
+            echo "</tr>";
+        }
+        echo "</table><br>";
+    } else {
+        echo "No employees found.<br><br>";
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Employee Management</title>
+</head>
+
+<body>
+    <h2>Employee Management System</h2>
+
+    <h3>Add Employee</h3>
+    <form method="POST">
+        Name: <input type="text" name="name" required>
+        <br><br>
+        Email: <input type="email" name="email" required>
+        <br><br>
+        <button type="submit" name="add"> Add Employee </button>
+    </form> <br>
+
+    <h3>Update Employee</h3>
+    <form method="POST">
+        Employee ID: <input type="number" name="id" required>
+        <br><br>
+        New Name: <input type="text" name="name" required>
+        <br><br>
+        New Email: <input type="email" name="email" required>
+        <br><br>
+        <button type="submit" name="update">Update Employee </button>
+    </form> <br>
+
+    <h3>Delete Employee</h3>
+    <form method="POST">
+        Employee ID: <input type="number" name="id" required>
+        <br><br>
+        <button type="submit" name="delete"> Delete Employee </button>
+    </form> <br>
+
+    <h3>Search Employee</h3>
+    <form method="POST">
+        Employee Name: <input type="text" name="search_name" required>
+        <br><br>
+        <button type="submit" name="search">Search Employee </button>
+    </form> <br>
+
+    <form method="POST">
+        <button type="submit" name="display"> Display All Employees </button>
+    </form>
+</body>
+
+</html>
+
+<?php
+mysqli_close($conn);
+?>
